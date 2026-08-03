@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Pattern Lock</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 350px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 15px; cursor: pointer; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 10px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Pattern Lock</h2>
+        <p>Draw a geometric vector connecting nodes on a 3x3 layout.</p>
+        <canvas id="canvas" width="220" height="220"></canvas>
+        <div id="status">Draw "L" path (0 -> 3 -> 6 -> 7 -> 8)</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status'); const dots = []; let path = []; let drawing = false;
+
+        for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { dots.push({ x: 45 + c * 65, y: 45 + r * 65, id: r * 3 + c }); } }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (path.length > 1) {
+                ctx.beginPath(); ctx.moveTo(dots[path[0]].x, dots[path[0]].y);
+                for (let i = 1; i < path.length; i++) ctx.lineTo(dots[path[i]].x, dots[path[i]].y);
+                ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 5; ctx.stroke();
+            }
+            dots.forEach(d => {
+                ctx.beginPath(); ctx.arc(d.x, d.y, 10, 0, Math.PI * 2);
+                ctx.fillStyle = path.includes(d.id) ? '#58a6ff' : '#30363d'; ctx.fill();
+            });
+        }
+        draw();
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: x - rect.left, y: y - rect.top };
+        }
+
+        function start(e) { drawing = true; path = []; move(e); }
+        function move(e) {
+            if (!drawing) return; const p = getPos(e);
+            dots.forEach(d => {
+                if (Math.hypot(d.x - p.x, d.y - p.y) < 22 && !path.includes(d.id)) { path.push(d.id); draw(); }
+            });
+        }
+        function end() {
+            if (!drawing) return; drawing = false;
+            if (path.join(',') === '0,3,6,7,8') {
+                status.innerText = "Success: Key matched!"; status.style.color = "#3fb950";
+            } else if (path.length > 0) {
+                status.innerText = "Error: Invalid pattern."; status.style.color = "#f85149";
+            }
+            path = []; setTimeout(draw, 600);
+        }
+
+        canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+        canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); window.addEventListener('touchend', end);
+    </script>
+</body>
+</html>
