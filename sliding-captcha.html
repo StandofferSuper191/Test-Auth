@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Slider Captcha</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 360px; width: 100%; box-sizing: border-box; }
+        
+        /* Зона капчи */
+        .captcha-area { position: relative; width: 260px; height: 130px; background: #30363d; margin: 20px auto; border-radius: 6px; overflow: hidden; }
+        .target-slot { position: absolute; top: 45px; left: 180px; width: 40px; height: 40px; background: #0d1117; border: 2px dashed #8b949e; border-radius: 4px; }
+        .slider-piece { position: absolute; top: 45px; left: 10px; width: 40px; height: 40px; background: #58a6ff; border: 2px solid #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); cursor: grab; }
+        
+        /* Дорожка ползунка */
+        .slider-track { position: relative; width: 260px; height: 40px; background: #21262d; border: 1px solid #30363d; border-radius: 20px; margin: 15px auto; }
+        .slider-thumb { position: absolute; top: 1px; left: 1px; width: 36px; height: 36px; background: #238636; border-radius: 50%; cursor: grab; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; user-select: none; }
+        
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Slider Captcha</h2>
+        <p>Verifies human telemetry profiles by monitoring velocity and cursor path variables.</p>
+        
+        <div class="captcha-area">
+            <div class="target-slot"></div>
+            <div class="slider-piece" id="piece"></div>
+        </div>
+
+        <div class="slider-track">
+            <div class="slider-thumb" id="thumb">→</div>
+        </div>
+
+        <div id="status">Status: Move slider to match the slot</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const thumb = document.getElementById('thumb');
+        const piece = document.getElementById('piece');
+        const status = document.getElementById('status');
+        let isDragging = false;
+        let startX = 0;
+
+        function onStart(e) {
+            isDragging = true;
+            startX = e.touches ? e.touches[0].clientX : e.clientX;
+            thumb.style.cursor = 'grabbing';
+            piece.style.cursor = 'grabbing';
+        }
+
+        function onMove(e) {
+            if (!isDragging) return;
+            const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+            let deltaX = currentX - startX;
+            
+            // Ограничиваем движение ползунка в пределах контейнера (макс 222px)
+            if (deltaX < 0) deltaX = 0;
+            if (deltaX > 222) deltaX = 222;
+
+            thumb.style.left = deltaX + 'px';
+            piece.style.left = (10 + deltaX) + 'px'; // Двигаем кусочек пазла синхронно
+        }
+
+        function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            thumb.style.cursor = 'grab';
+            piece.style.cursor = 'grab';
+
+            const finalLeft = parseInt(piece.style.left);
+            
+            // Проверяем, попал ли кусочек в диапазон target-slot (цель на 180px, с допуском)
+            if (finalLeft >= 177 && finalLeft <= 183) {
+                status.innerText = "🎉 Verification passed! Human telemetry verified.";
+                status.style.color = "#3fb950";
+                thumb.style.background = "#3fb950";
+                // Блокируем дальнейший ввод
+                window.removeEventListener('mouseup', onEnd);
+            } else {
+                status.innerText = "❌ Verification failed. Mismatched position.";
+                status.style.color = "#f85149";
+                // Сброс в начальное состояние
+                thumb.style.left = '1px';
+                piece.style.left = '10px';
+            }
+        }
+
+        thumb.addEventListener('mousedown', onStart);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+
+        thumb.addEventListener('touchstart', onStart);
+        window.addEventListener('touchmove', onMove);
+        window.addEventListener('touchend', onEnd);
+    </script>
+</body>
+</html>
