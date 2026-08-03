@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Grid PIN</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 360px; width: 100%; box-sizing: border-box; }
+        
+        /* Сетка кнопок */
+        .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+        .grid-cell { background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; padding: 15px 0; font-size: 18px; font-weight: bold; cursor: pointer; user-select: none; }
+        .grid-cell:hover { background: #30363d; border-color: #8b949e; }
+        .grid-cell.selected { background: #1f6feb; border-color: #58a6ff; }
+        
+        button.verify { width: 100%; padding: 12px; background: #238636; border: 1px solid rgba(240,246,252,0.1); color: white; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button.verify:hover { background: #2ea44f; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Grid PIN Auth</h2>
+        <p>Click on the cells to spell the secret word: <span style="color: #ffa657; font-weight: bold;">CODE</span></p>
+        
+        <div class="grid-container" id="grid"></div>
+
+        <button class="verify" id="verifyBtn">Verify Grid Sequence</button>
+        <div id="status">Status: Waiting for input</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const status = document.getElementById('status');
+        const verifyBtn = document.getElementById('verifyBtn');
+        
+        // Массив символов, включая буквы секретного слова "CODE"
+        const characters = ['C', 'O', 'D', 'E', 'A', 'B', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R'];
+        
+        // Перемешиваем массив случайным образом (Fisher-Yates Shuffle)
+        for (let i = characters.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [characters[i], characters[j]] = [characters[j], characters[i]];
+        }
+
+        let currentSequence = [];
+
+        // Рендерим сетку 4х4
+        characters.forEach(char => {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.innerText = char;
+            cell.addEventListener('click', () => {
+                if (cell.classList.contains('selected')) {
+                    cell.classList.remove('selected');
+                    currentSequence = currentSequence.filter(val => val !== char);
+                } else {
+                    cell.classList.add('selected');
+                    currentSequence.push(char);
+                }
+            });
+            grid.appendChild(cell);
+        });
+
+        verifyBtn.addEventListener('click', () => {
+            const resultString = currentSequence.join('');
+            if (resultString === 'CODE') {
+                status.innerText = "🎉 Grid sequence verification passed!";
+                status.style.color = "#3fb950";
+            } else {
+                status.innerText = "❌ Incorrect sequence. Remember to spell 'CODE' in exact order.";
+                status.style.color = "#f85149";
+                // Сброс выделения
+                document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('selected'));
+                currentSequence = [];
+            }
+        });
+    </script>
+</body>
+</html>
