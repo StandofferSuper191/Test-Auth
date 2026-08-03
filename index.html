@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест ввода ключа в Google Authenticator</title>
+    <!-- Подключаем библиотеку для генерации и проверки TOTP прямо в браузере -->
+    <script src="https://cloudflare.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; width: 100%; text-align: center; }
+        h2 { color: #0f9d58; margin-top: 0; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; text-align: left; }
+        .step-title { font-weight: bold; margin-bottom: 8px; color: #555; }
+        .secret-container { margin: 15px 0; text-align: center; }
+        .secret-text { background: #e8f5e9; color: #1b5e20; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 18px; font-weight: bold; letter-spacing: 1px; word-break: break-all; display: block; border: 1px dashed #0f9d58; }
+        input[type="text"] { width: 100%; padding: 10px; box-sizing: border-box; border: 2px solid #ccc; border-radius: 6px; font-size: 18px; text-align: center; letter-spacing: 4px; }
+        input[type="text"]:focus { border-color: #0f9d58; outline: none; }
+        button { background: #0f9d58; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #0b8043; }
+        #result { margin-top: 15px; font-weight: bold; font-size: 16px; text-align: center; }
+        .success { color: #0f9d58; }
+        .error { color: #d93025; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Тест ручного ввода ключа</h2>
+    <p style="font-size: 14px; color: #666;">Без QR-кода — только строка по стандарту Base32</p>
+
+    <!-- ШАГ 1: Показ ключа -->
+    <div class="step">
+        <div class="step-title">Шаг 1: Скопируйте ключ настроек</div>
+        <p style="font-size: 13px; margin: 0 0 10px 0;">В приложении нажмите <b>+</b> -> <b>Ввести ключ настройки</b>. Вставьте этот текст во второе поле:</p>
+        <div class="secret-container">
+            <span class="secret-text" id="secretKey">Генерация...</span>
+        </div>
+        <p style="font-size: 12px; color: #666; margin: 0;"><i>В первое поле (Название) можете написать любое имя. В третьем поле оставьте "По времени".</i></p>
+    </div>
+
+    <!-- ШАГ 2: Валидация -->
+    <div class="step">
+        <div class="step-title">Шаг 2: Введите код для проверки</div>
+        <p style="font-size: 13px; margin: 0 0 10px 0;">Когда аккаунт добавится, введите сюда текущие 6 цифр:</p>
+        <input type="text" id="authCode" placeholder="000000" maxlength="6" autocomplete="off">
+        <button onclick="verifyCode()">Проверить код</button>
+        <div id="result"></div>
+    </div>
+</div>
+
+<script>
+    // Генерация строго валидного ключа Base32 (символы A-Z и цифры 2-7)
+    function generateBase32Secret(length = 16) {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        let secret = "";
+        for (let i = 0; i < length; i++) {
+            secret += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        }
+        return secret;
+    }
+
+    // Создаем ключ и выводим его на экран
+    const secret = generateBase32Secret();
+    document.getElementById('secretKey').innerText = secret;
+
+    // Инициализируем TOTP-плагин
+    const totp = jsOTP.totp();
+
+    // Функция проверки (имитация бэкенд-валидации)
+    function verifyCode() {
+        const userCode = document.getElementById('authCode').value.trim();
+        const resultDiv = document.getElementById('result');
+
+        if (userCode.length !== 6 || isNaN(userCode)) {
+            resultDiv.className = "error";
+            resultDiv.innerText = "❌ Введите 6 цифр!";
+            return;
+        }
+
+        // Вычисляем, какой код правильный в эту секунду
+        const correctCode = totp.getOTP(secret);
+
+        if (userCode === correctCode) {
+            resultDiv.className = "success";
+            resultDiv.innerText = "🎉 Отлично! Код совпал. Сервер пропустил авторизацию.";
+        } else {
+            resultDiv.className = "error";
+            resultDiv.innerText = "❌ Ошибка. Код неверный или его время жизни истекло.";
+        }
+    }
+</script>
+
+</body>
+</html>
