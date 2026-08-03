@@ -1,95 +1,73 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест ввода ключа в Google Authenticator</title>
-    <!-- Подключаем библиотеку для генерации и проверки TOTP прямо в браузере -->
-    <script src="https://cloudflare.com"></script>
+    <title>Test-Auth Labs | Hub</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; width: 100%; text-align: center; }
-        h2 { color: #0f9d58; margin-top: 0; }
-        .step { margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; text-align: left; }
-        .step-title { font-weight: bold; margin-bottom: 8px; color: #555; }
-        .secret-container { margin: 15px 0; text-align: center; }
-        .secret-text { background: #e8f5e9; color: #1b5e20; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 18px; font-weight: bold; letter-spacing: 1px; word-break: break-all; display: block; border: 1px dashed #0f9d58; }
-        input[type="text"] { width: 100%; padding: 10px; box-sizing: border-box; border: 2px solid #ccc; border-radius: 6px; font-size: 18px; text-align: center; letter-spacing: 4px; }
-        input[type="text"]:focus { border-color: #0f9d58; outline: none; }
-        button { background: #0f9d58; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:hover { background: #0b8043; }
-        #result { margin-top: 15px; font-weight: bold; font-size: 16px; text-align: center; }
-        .success { color: #0f9d58; }
-        .error { color: #d93025; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        h1 { color: #ffffff; font-size: 32px; margin-bottom: 10px; }
+        .subtitle { color: #8b949e; margin-bottom: 40px; font-size: 16px; }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        .menu-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+            text-decoration: none;
+            color: #c9d1d9;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: #58a6ff;
+            background-color: #1f242c;
+        }
+        .menu-card h2 { margin: 0 0 10px 0; font-size: 20px; color: #f0f6fc; }
+        .menu-card p { font-size: 14px; color: #8b949e; margin: 0; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Тест ручного ввода ключа</h2>
-    <p style="font-size: 14px; color: #666;">Без QR-кода — только строка по стандарту Base32</p>
+    <h1>Test-Auth Labs</h1>
+    <div class="subtitle">Select an authentication method to test</div>
 
-    <!-- ШАГ 1: Показ ключа -->
-    <div class="step">
-        <div class="step-title">Шаг 1: Скопируйте ключ настроек</div>
-        <p style="font-size: 13px; margin: 0 0 10px 0;">В приложении нажмите <b>+</b> -> <b>Ввести ключ настройки</b>. Вставьте этот текст во второе поле:</p>
-        <div class="secret-container">
-            <span class="secret-text" id="secretKey">Генерация...</span>
-        </div>
-        <p style="font-size: 12px; color: #666; margin: 0;"><i>В первое поле (Название) можете написать любое имя. В третьем поле оставьте "По времени".</i></p>
+    <div class="menu-grid">
+        <a href="biometry.html" class="menu-card">
+            <h2>1. Biometry</h2>
+            <p>Test Fingerprint, Face ID or Touch ID protection.</p>
+        </a>
+        <a href="otp.html" class="menu-card">
+            <h2>2. OTP Code</h2>
+            <p>Test numeric one-time password inputs.</p>
+        </a>
+        <a href="pattern.html" class="menu-card">
+            <h2>3. Pattern Lock</h2>
+            <p>Test graphical grid gesture sequence.</p>
+        </a>
+        <a href="hardware.html" class="menu-card">
+            <h2>4. Hardware Key</h2>
+            <p>Test external FIDO2 USB tokens like YubiKey.</p>
+        </a>
     </div>
-
-    <!-- ШАГ 2: Валидация -->
-    <div class="step">
-        <div class="step-title">Шаг 2: Введите код для проверки</div>
-        <p style="font-size: 13px; margin: 0 0 10px 0;">Когда аккаунт добавится, введите сюда текущие 6 цифр:</p>
-        <input type="text" id="authCode" placeholder="000000" maxlength="6" autocomplete="off">
-        <button onclick="verifyCode()">Проверить код</button>
-        <div id="result"></div>
-    </div>
-</div>
-
-<script>
-    // Генерация строго валидного ключа Base32 (символы A-Z и цифры 2-7)
-    function generateBase32Secret(length = 16) {
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-        let secret = "";
-        for (let i = 0; i < length; i++) {
-            secret += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-        }
-        return secret;
-    }
-
-    // Создаем ключ и выводим его на экран
-    const secret = generateBase32Secret();
-    document.getElementById('secretKey').innerText = secret;
-
-    // Инициализируем TOTP-плагин
-    const totp = jsOTP.totp();
-
-    // Функция проверки (имитация бэкенд-валидации)
-    function verifyCode() {
-        const userCode = document.getElementById('authCode').value.trim();
-        const resultDiv = document.getElementById('result');
-
-        if (userCode.length !== 6 || isNaN(userCode)) {
-            resultDiv.className = "error";
-            resultDiv.innerText = "❌ Введите 6 цифр!";
-            return;
-        }
-
-        // Вычисляем, какой код правильный в эту секунду
-        const correctCode = totp.getOTP(secret);
-
-        if (userCode === correctCode) {
-            resultDiv.className = "success";
-            resultDiv.innerText = "🎉 Отлично! Код совпал. Сервер пропустил авторизацию.";
-        } else {
-            resultDiv.className = "error";
-            resultDiv.innerText = "❌ Ошибка. Код неверный или его время жизни истекло.";
-        }
-    }
-</script>
 
 </body>
 </html>
