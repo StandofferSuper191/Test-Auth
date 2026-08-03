@@ -5,69 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test-Auth Labs | Hub</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0d1117;
-            color: #c9d1d9;
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; position: relative; }
         h1 { color: #ffffff; font-size: 32px; margin-bottom: 10px; }
         .subtitle { color: #8b949e; margin-bottom: 40px; font-size: 16px; }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            max-width: 800px;
-            width: 100%;
-        }
-        .menu-card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            padding: 24px;
-            text-align: center;
-            text-decoration: none;
-            color: #c9d1d9;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .menu-card:hover {
-            transform: translateY(-5px);
-            border-color: #58a6ff;
-            background-color: #1f242c;
-        }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 950px; width: 100%; }
+        .menu-card { background-color: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 24px; text-align: center; text-decoration: none; color: #c9d1d9; transition: transform 0.2s, border-color 0.2s; }
+        .menu-card:hover { transform: translateY(-5px); border-color: #58a6ff; background-color: #1f242c; }
         .menu-card h2 { margin: 0 0 10px 0; font-size: 20px; color: #f0f6fc; }
         .menu-card p { font-size: 14px; color: #8b949e; margin: 0; }
+        .lang-btn { position: absolute; top: 20px; right: 20px; background: #161b22; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>Test-Auth Labs</h1>
-    <div class="subtitle">Select an authentication method to test</div>
+    <button class="lang-btn" id="langBtn">EN</button>
+    <h1 id="title">Test-Auth Labs</h1>
+    <div class="subtitle" id="subtitle">Select an authentication method to test</div>
 
     <div class="menu-grid">
         <a href="biometry.html" class="menu-card">
-            <h2>1. Biometry</h2>
-            <p>Test Fingerprint, Face ID or Touch ID protection.</p>
+            <h2 id="m1-title">1. Biometry</h2>
+            <p id="m1-desc">Test Fingerprint, Face ID or Touch ID protection.</p>
         </a>
         <a href="otp.html" class="menu-card">
-            <h2>2. OTP Code</h2>
-            <p>Test numeric one-time password inputs.</p>
+            <h2 id="m2-title">2. OTP Code</h2>
+            <p id="m2-desc">Test numeric one-time password inputs.</p>
         </a>
         <a href="pattern.html" class="menu-card">
-            <h2>3. Pattern Lock</h2>
-            <p>Test graphical grid gesture sequence.</p>
+            <h2 id="m3-title">3. Pattern Lock</h2>
+            <p id="m3-desc">Test graphical grid gesture sequence.</p>
         </a>
         <a href="hardware.html" class="menu-card">
-            <h2>4. Hardware Key</h2>
-            <p>Test external FIDO2 USB tokens like YubiKey.</p>
+            <h2 id="m4-title">4. Hardware Key</h2>
+            <p id="m4-desc">Test external FIDO2 USB tokens like YubiKey.</p>
+        </a>
+        <!-- НОВЫЕ КАРТОЧКИ -->
+        <a href="push.html" class="menu-card">
+            <h2 id="m5-title">5. Push Approval</h2>
+            <p id="m5-desc">Simulates real-time smartphone login approval window.</p>
+        </a>
+        <a href="matrix.html" class="menu-card">
+            <h2 id="m6-title">6. Matrix Card</h2>
+            <p id="m6-desc">Validate coordinates against a code table card grid.</p>
+        </a>
+        <a href="magic.html" class="menu-card">
+            <h2 id="m7-title">7. Magic Link</h2>
+            <p id="m7-desc">Test token validation through a simulated email link.</p>
         </a>
     </div>
 
+    <script>
+        const translations = {
+            ru: {
+                title: "Лаборатория Аутентификации",
+                sub: "Выберите метод проверки подлинности для тестирования",
+                m1_t: "1. Биометрия", m1_d: "Проверка отпечатка пальца, Face ID или Touch ID.",
+                m2_t: "2. Одноразовый код", m2_d: "Тестирование цифровых полей ввода OTP кодов.",
+                m3_t: "3. Графический ключ", m3_d: "Проверка последовательности жестов на матрице точек.",
+                m4_t: "4. Аппаратный ключ", m4_d: "Проверка внешних USB-токенов FIDO2 (YubiKey).",
+                m5_t: "5. Push Подтверждение", m5_d: "Имитация окна одобрения входа на смартфоне.",
+                m6_t: "6. Матричная карта", m6_d: "Валидация координат по таблице секретных символов.",
+                m7_t: "7. Magic Link", m7_d: "Тест беспарольного входа через ссылку в письме."
+            },
+            en: {
+                title: "Test-Auth Labs",
+                sub: "Select an authentication method to test",
+                m1_t: "1. Biometry", m1_d: "Test Fingerprint, Face ID or Touch ID protection.",
+                m2_t: "2. OTP Code", m2_d: "Test numeric one-time password inputs.",
+                m3_t: "3. Pattern Lock", m3_d: "Test graphical grid gesture sequence.",
+                m4_t: "4. Hardware Key", m4_d: "Test external FIDO2 USB tokens like YubiKey.",
+                m5_t: "5. Push Approval", m5_d: "Simulates real-time smartphone login approval window.",
+                m6_t: "6. Matrix Card", m6_d: "Validate coordinates against a code table card grid.",
+                m7_t: "7. Magic Link", m7_d: "Test token validation through a simulated email link."
+            }
+        };
+
+        let currentLang = localStorage.getItem('auth_lang') || 'en';
+
+        function updateLang() {
+            const t = translations[currentLang];
+            document.getElementById('title').innerText = t.title;
+            document.getElementById('subtitle').innerText = t.sub;
+            document.getElementById('m1-title').innerText = t.m1_t; document.getElementById('m1-desc').innerText = t.m1_d;
+            document.getElementById('m2-title').innerText = t.m2_t; document.getElementById('m2-desc').innerText = t.m2_d;
+            document.getElementById('m3-title').innerText = t.m3_t; document.getElementById('m3-desc').innerText = t.m3_d;
+            document.getElementById('m4-title').innerText = t.m4_t; document.getElementById('m4-desc').innerText = t.m4_d;
+            document.getElementById('m5-title').innerText = t.m5_t; document.getElementById('m5-desc').innerText = t.m5_d;
+            document.getElementById('m6-title').innerText = t.m6_t; document.getElementById('m6-desc').innerText = t.m6_d;
+            document.getElementById('m7-title').innerText = t.m7_t; document.getElementById('m7-desc').innerText = t.m7_d;
+            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
+        }
+
+        document.getElementById('langBtn').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ru' : 'en';
+            localStorage.setItem('auth_lang', currentLang);
+            updateLang();
+        });
+
+        updateLang();
+    </script>
 </body>
 </html>
