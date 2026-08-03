@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Push Approval</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 380px; width: 100%; box-sizing: border-box; position: relative; }
+        button { width: 100%; padding: 12px; background: #238636; border: 1px solid rgba(240,246,252,0.1); color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #2ea44f; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        .lang-btn { position: absolute; top: 15px; right: 15px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; width: auto; margin: 0; }
+        
+        /* Стили фальшивого Пуш-окна */
+        .push-notification { display: none; background: #21262d; border: 1px solid #58a6ff; border-radius: 8px; padding: 15px; margin-top: 20px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .push-title { font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .push-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-deny { background: #f85149; }
+        .btn-deny:hover { background: #da3633; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <button class="lang-btn" id="langBtn">EN</button>
+        <h2 id="title">Push Notification Approval</h2>
+        <p id="desc">Simulates a mobile push verification prompt used by Google or Apple for instant login validation.</p>
+        
+        <button id="requestBtn">Request Login Push</button>
+        
+        <div class="push-notification" id="pushBox">
+            <div class="push-title" id="pushTitle">Security Alert</div>
+            <div id="pushBody">Are you trying to sign in from this device?</div>
+            <div class="push-buttons">
+                <button class="btn-deny" id="denyBtn">No, Deny</button>
+                <button id="approveBtn">Yes, It's Me</button>
+            </div>
+        </div>
+
+        <div id="status">Status: Ready</div>
+        <a href="index.html" class="back-link" id="backLink">← Back to Hub</a>
+    </div>
+
+    <script>
+        const translations = {
+            ru: {
+                title: "Подтверждение через Push",
+                desc: "Имитирует мобильное пуш-уведомление, используемое Google или Apple для мгновенной валидации входа.",
+                requestBtn: "Запросить Пуш для входа",
+                pushTitle: "Оповещение безопасности",
+                pushBody: "Вы пытаетесь войти в аккаунт с этого устройства?",
+                deny: "Нет, заблокировать",
+                approve: "Да, это я",
+                ready: "Статус: Готово",
+                waiting: "Отправка пуш-запроса...",
+                approved: "🎉 Вход успешно подтвержден!",
+                denied: "❌ Вход отклонен пользователем.",
+                back: "← Назад в меню"
+            },
+            en: {
+                title: "Push Notification Approval",
+                desc: "Simulates a mobile push verification prompt used by Google or Apple for instant login validation.",
+                requestBtn: "Request Login Push",
+                pushTitle: "Security Alert",
+                pushBody: "Are you trying to sign in from this device?",
+                deny: "No, Deny",
+                approve: "Yes, It's Me",
+                ready: "Status: Ready",
+                waiting: "Sending push request...",
+                approved: "🎉 Login approved successfully!",
+                denied: "❌ Login denied by user.",
+                back: "← Back to Hub"
+            }
+        };
+
+        let currentLang = localStorage.getItem('auth_lang') || 'en';
+        
+        function updateLang() {
+            const t = translations[currentLang];
+            document.getElementById('title').innerText = t.title;
+            document.getElementById('desc').innerText = t.desc;
+            document.getElementById('requestBtn').innerText = t.requestBtn;
+            document.getElementById('pushTitle').innerText = t.pushTitle;
+            document.getElementById('pushBody').innerText = t.pushBody;
+            document.getElementById('denyBtn').innerText = t.deny;
+            document.getElementById('approveBtn').innerText = t.approve;
+            document.getElementById('backLink').innerText = t.back;
+            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
+            if(document.getElementById('status').innerText.includes('Ready') || document.getElementById('status').innerText.includes('Готово')) {
+                document.getElementById('status').innerText = t.ready;
+            }
+        }
+
+        document.getElementById('langBtn').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ru' : 'en';
+            localStorage.setItem('auth_lang', currentLang);
+            updateLang();
+        });
+
+        document.getElementById('requestBtn').addEventListener('click', () => {
+            const t = translations[currentLang];
+            document.getElementById('status').innerText = t.waiting;
+            document.getElementById('status').style.color = "#8b949e";
+            
+            setTimeout(() => {
+                document.getElementById('pushBox').style.display = "block";
+            }, 1000);
+        });
+
+        document.getElementById('approveBtn').addEventListener('click', () => {
+            const t = translations[currentLang];
+            document.getElementById('status').innerText = t.approved;
+            document.getElementById('status').style.color = "#3fb950";
+            document.getElementById('pushBox').style.display = "none";
+        });
+
+        document.getElementById('denyBtn').addEventListener('click', () => {
+            const t = translations[currentLang];
+            document.getElementById('status').innerText = t.denied;
+            document.getElementById('status').style.color = "#f85149";
+            document.getElementById('pushBox').style.display = "none";
+        });
+
+        updateLang();
+    </script>
+</body>
+</html>
