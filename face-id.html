@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Face Recognition</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 380px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Круглое окно камеры */
+        .camera-wrapper { position: relative; width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 3px solid #30363d; margin: 20px 0; background: #000; }
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        
+        /* Сетка сканера */
+        .scanner-line { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #3fb950; box-shadow: 0 0 10px #3fb950; animation: scan 2s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+        
+        button { width: 100%; padding: 12px; background: #238636; border: 1px solid rgba(240,246,252,0.1); color: white; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #2ea44f; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Face Recognition</h2>
+        <p>Simulates computer-vision biometric identity verification using the device front-facing camera.</p>
+        
+        <div class="camera-wrapper">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="scanner-line" id="scanner"></div>
+        </div>
+
+        <button id="startBtn">Initialize Face Scan</button>
+        <div id="status">Status: Ready</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const scanner = document.getElementById('scanner');
+        const status = document.getElementById('status');
+        const btn = document.getElementById('startBtn');
+
+        btn.addEventListener('click', async () => {
+            try {
+                status.innerText = "Requesting camera access...";
+                // Запрашиваем реальный доступ к камере
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                video.srcObject = stream;
+                
+                // Запуск процесса анимации "сканирования"
+                btn.style.display = "none";
+                scanner.style.display = "block";
+                status.innerText = "Analyzing facial vectors...";
+                status.style.color = "#58a6ff";
+
+                setTimeout(() => {
+                    scanner.style.display = "none";
+                    status.innerText = "Success: Identity confirmed!";
+                    status.style.color = "#3fb950";
+                    // Отключаем камеру после успешного теста
+                    stream.getTracks().forEach(track => track.stop());
+                }, 4000);
+
+            } catch (err) {
+                status.innerText = "Camera Error: " + err.message;
+                status.style.color = "#f85149";
+            }
+        });
+    </script>
+</body>
+</html>
