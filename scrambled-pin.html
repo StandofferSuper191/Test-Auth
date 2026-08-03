@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Scrambled PIN</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 340px; width: 100%; box-sizing: border-box; }
+        
+        /* Дисплей ввода точек */
+        .pin-display { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .pin-dot { width: 14px; height: 14px; background: #30363d; border-radius: 50%; }
+        .pin-dot.active { background: #58a6ff; box-shadow: 0 0 8px #58a6ff; }
+        
+        /* Сетка перемешанных цифровых кнопок */
+        .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 240px; margin: 0 auto; }
+        .pin-btn { background: #21262d; border: 1px solid #30363d; color: white; border-radius: 50%; width: 64px; height: 64px; font-size: 20px; font-weight: bold; cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: center; }
+        .pin-btn:hover { background: #30363d; border-color: #8b949e; }
+        .pin-btn:active { background: #1f6feb; }
+        
+        .back-link { margin-top: 25px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 20px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Scrambled PIN Pad</h2>
+        <p>Anti-spyware keyboard layout. Button positions scramble randomly to prevent coordinate-tracking injection.</p>
+        
+        <div class="pin-display">
+            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        </div>
+
+        <div class="pin-grid" id="pad"></div>
+
+        <div id="status">Hint: Enter secure code "7753"</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const pad = document.getElementById('pad');
+        const status = document.getElementById('status');
+        const dots = document.querySelectorAll('.pin-dot');
+        
+        let enteredPin = '';
+        const targetPin = '7753';
+
+        function renderScrambledPad() {
+            pad.innerHTML = '';
+            const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+            
+            // Перемешиваем цифры перед рендером
+            for (let i = digits.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [digits[i], digits[j]] = [digits[j], digits[i]];
+            }
+
+            // Создаем кнопки
+            digits.forEach(num => {
+                const btn = document.createElement('div');
+                btn.className = 'pin-btn';
+                btn.innerText = num;
+                btn.addEventListener('click', () => handleInput(num));
+                pad.appendChild(btn);
+            });
+        }
+
+        function handleInput(num) {
+            if (enteredPin.length < 4) {
+                enteredPin += num;
+                dots[enteredPin.length - 1].classList.add('active');
+                
+                // Перемешиваем заново ПОСЛЕ КАЖДОГО клика для абсолютной защиты от макросов!
+                if (enteredPin.length < 4) renderScrambledPad();
+            }
+
+            if (enteredPin.length === 4) {
+                setTimeout(() => {
+                    if (enteredPin === targetPin) {
+                        status.innerText = "🎉 Authentication success! Access granted.";
+                        status.style.color = "#3fb950";
+                    } else {
+                        status.innerText = "❌ Denied. PIN incorrect. Resetting...";
+                        status.style.color = "#f85149";
+                        resetPin();
+                    }
+                }, 300);
+            }
+        }
+
+        function resetPin() {
+            enteredPin = '';
+            dots.forEach(dot => dot.classList.remove('active'));
+            renderScrambledPad();
+        }
+
+        renderScrambledPad();
+    </script>
+</body>
+</html>
