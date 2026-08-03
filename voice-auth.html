@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Voice Biometrics</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 380px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Визуализатор звуковых волн */
+        .wave-container { position: relative; width: 100%; height: 80px; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; margin: 20px 0; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .bar { width: 6px; height: 10px; background: #58a6ff; border-radius: 3px; transition: height 0.1s ease; }
+        
+        button { width: 100%; padding: 12px; background: #238636; border: 1px solid rgba(240,246,252,0.1); color: white; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #2ea44f; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+        .phrase { font-size: 18px; font-weight: bold; color: #ffa657; margin: 10px 0; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Voice Biometrics</h2>
+        <p>Say the passphrase aloud to let the system analyze your unique vocal frequency footprint.</p>
+        
+        <div class="phrase">"MY VOICE IS MY PASSPORT"</div>
+
+        <div class="wave-container" id="waveBox">
+            <!-- 10 звуковых полосок для анимации -->
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+
+        <button id="recordBtn">Hold to Record Phrase</button>
+        <div id="status">Status: Ready</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const recordBtn = document.getElementById('recordBtn');
+        const status = document.getElementById('status');
+        const bars = document.querySelectorAll('.bar');
+        let animationInterval;
+
+        // Эмуляция анализа аудиочастот (изменение высоты полосок)
+        function startWaveAnimation() {
+            animationInterval = setInterval(() => {
+                bars.forEach(bar => {
+                    const randomHeight = Math.floor(Math.random() * 55) + 10;
+                    bar.style.height = randomHeight + 'px';
+                    bar.style.background = '#3fb950';
+                });
+            }, 100);
+        }
+
+        function stopWaveAnimation() {
+            clearInterval(animationInterval);
+            bars.forEach(bar => {
+                bar.style.height = '10px';
+                bar.style.background = '#58a6ff';
+            });
+        }
+
+        recordBtn.addEventListener('mousedown', async () => {
+            try {
+                // Запрашиваем реальный доступ к аудиосистеме для легитимности работы API браузера
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                status.innerText = "Listening... Speak now.";
+                status.style.color = "#58a6ff";
+                startWaveAnimation();
+            } catch (err) {
+                status.innerText = "Microphone Error: " + err.message;
+                status.style.color = "#f85149";
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (status.innerText === "Listening... Speak now.") {
+                stopWaveAnimation();
+                status.innerText = "Processing acoustic footprint...";
+                status.style.color = "#ffa657";
+                recordBtn.style.display = "none";
+
+                setTimeout(() => {
+                    status.innerText = "🎉 Voice biometric matched successfully!";
+                    status.style.color = "#3fb950";
+                }, 3000);
+            }
+        });
+
+        // Поддержка тач-событий для мобильных устройств
+        recordBtn.addEventListener('touchstart', async (e) => {
+            e.preventDefault();
+            recordBtn.dispatchEvent(new Event('mousedown'));
+        });
+        window.addEventListener('touchend', () => {
+            window.dispatchEvent(new Event('mouseup'));
+        });
+    </script>
+</body>
+</html>
