@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | OTP</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 350px; width: 100%; box-sizing: border-box; }
+        .wrapper { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+        input { width: 45px; height: 55px; font-size: 24px; font-weight: bold; text-align: center; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; }
+        input:focus { border-color: #58a6ff; outline: none; }
+        button { width: 100%; padding: 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #30363d; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>OTP Verification</h2>
+        <p>Simulates standard interface for inputting confirmation tokens.</p>
+        <div class="wrapper">
+            <input type="text" class="box" maxlength="1">
+            <input type="text" class="box" maxlength="1">
+            <input type="text" class="box" maxlength="1">
+            <input type="text" class="box" maxlength="1">
+        </div>
+        <button id="btn">Verify Code</button>
+        <div id="status">Hint: Enter "1234"</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const boxes = document.querySelectorAll('.box');
+        boxes.forEach((box, idx) => {
+            box.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && idx < boxes.length - 1) boxes[idx + 1].focus();
+            });
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && idx > 0 && e.target.value.length === 0) boxes[idx - 1].focus();
+            });
+        });
+
+        document.getElementById('btn').addEventListener('click', () => {
+            const status = document.getElementById('status');
+            let code = ''; boxes.forEach(b => code += b.value);
+            if (code === '1234') {
+                status.innerText = "Success: Access granted!"; status.style.color = "#3fb950";
+            } else {
+                status.innerText = "Error: Mismatched code."; status.style.color = "#f85149";
+            }
+        });
+    </script>
+</body>
+</html>
