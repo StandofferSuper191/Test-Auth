@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Magic Link</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 380px; width: 100%; box-sizing: border-box; position: relative; }
+        button { width: 100%; padding: 12px; background: #8957e5; border: 1px solid rgba(240,246,252,0.1); color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:hover { background: #986ff3; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        .lang-btn { position: absolute; top: 15px; right: 15px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; width: auto; }
+        
+        .fake-inbox { display: none; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-top: 20px; text-align: left; }
+        .mail-link { display: inline-block; margin-top: 10px; color: #58a6ff; text-decoration: underline; cursor: pointer; font-weight: bold; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <button class="lang-btn" id="langBtn">EN</button>
+        <h2 id="title">Magic Link Token</h2>
+        <p id="desc">Passwordless login where a cryptographic validation link is dispatched to your trusted channel.</p>
+        
+        <button id="sendBtn">Send Magic Link</button>
+
+        <div class="fake-inbox" id="inbox">
+            <div style="font-size: 12px; color: #8b949e;" id="inboxTitle">Simulated Inbox (1 New Message):</div>
+            <div style="font-size: 14px; margin-top: 5px;"><b id="mailSub">Subject:</b> Secure Login Link</div>
+            <div class="mail-link" id="magicLinkClick">👉 CLICK HERE TO LOG IN</div>
+        </div>
+
+        <div id="status">Status: Ready</div>
+        <a href="index.html" class="back-link" id="backLink">← Back to Hub</a>
+    </div>
+
+    <script>
+        const translations = {
+            ru: {
+                title: "Беспарольная ссылка (Magic Link)",
+                desc: "Вход без пароля, при котором криптографическая проверочная ссылка отправляется по доверенному каналу связи.",
+                sendBtn: "Отправить Magic Link",
+                inboxTitle: "Имитация Входящих (1 новое сообщение):",
+                mailSub: "Тема: Ссылка для безопасного входа",
+                linkText: "👉 НАЖМИТЕ ЗДЕСЬ ДЛЯ ВХОДА",
+                ready: "Статус: Готово",
+                sending: "Генерация безопасного токена...",
+                sent: "📩 Ссылка успешно сгенерирована ниже!",
+                success: "🎉 Успех! Токен валидирован. Вход выполнен.",
+                back: "← Назад в меню"
+            },
+            en: {
+                title: "Magic Link Token",
+                desc: "Passwordless login where a cryptographic validation link is dispatched to your trusted channel.",
+                sendBtn: "Send Magic Link",
+                inboxTitle: "Simulated Inbox (1 New Message):",
+                mailSub: "Subject: Secure Login Link",
+                linkText: "👉 CLICK HERE TO LOG IN",
+                ready: "Status: Ready",
+                sending: "Generating secure token link...",
+                sent: "📩 Token link generated successfully below!",
+                success: "🎉 Success! Token validated. Logged in.",
+                back: "← Back to Hub"
+            }
+        };
+
+        let currentLang = localStorage.getItem('auth_lang') || 'en';
+        
+        function updateLang() {
+            const t = translations[currentLang];
+            document.getElementById('title').innerText = t.title;
+            document.getElementById('desc').innerText = t.desc;
+            document.getElementById('sendBtn').innerText = t.sendBtn;
+            document.getElementById('inboxTitle').innerText = t.inboxTitle;
+            document.getElementById('mailSub').innerHTML = `<b>${t.mailSub.split(':')[0]}:</b> ${t.mailSub.split(':')[1]}`;
+            document.getElementById('magicLinkClick').innerText = t.linkText;
+            document.getElementById('backLink').innerText = t.back;
+            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
+            if(document.getElementById('status').innerText.includes('Ready') || document.getElementById('status').innerText.includes('Готово')) {
+                document.getElementById('status').innerText = t.ready;
+            }
+        }
+
+        document.getElementById('langBtn').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ru' : 'en';
+            localStorage.setItem('auth_lang', currentLang);
+            updateLang();
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const t = translations[currentLang];
+            document.getElementById('status').innerText = t.sending;
+            
+            setTimeout(() => {
+                document.getElementById('status').innerText = t.sent;
+                document.getElementById('status').style.color = "#58a6ff";
+                document.getElementById('inbox').style.display = "block";
+            }, 800);
+        });
+
+        document.getElementById('magicLinkClick').addEventListener('click', () => {
+            const t = translations[currentLang];
+            document.getElementById('status').innerText = t.success;
+            document.getElementById('status').style.color = "#3fb950";
+            document.getElementById('inbox').style.display = "none";
+        });
+
+        updateLang();
+    </script>
+</body>
+</html>
