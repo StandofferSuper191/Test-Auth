@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test-Auth Labs | Hub</title>
     <style>
-        /* Базовые стили в стиле темной темы GitHub */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0d1117;
@@ -19,20 +18,8 @@
             min-height: 80vh;
             position: relative;
         }
-
-        h1 {
-            color: #ffffff;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #8b949e;
-            margin-bottom: 40px;
-            font-size: 16px;
-        }
-
-        /* Сетка для всех 10 карточек */
+        h1 { color: #ffffff; font-size: 32px; margin-bottom: 10px; }
+        .subtitle { color: #8b949e; margin-bottom: 40px; font-size: 16px; }
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -40,8 +27,6 @@
             max-width: 1200px;
             width: 100%;
         }
-
-        /* Стили карточек выбора методов */
         .menu-card {
             background-color: #161b22;
             border: 1px solid #30363d;
@@ -52,27 +37,13 @@
             color: #c9d1d9;
             transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
         }
-
         .menu-card:hover {
             transform: translateY(-5px);
             border-color: #58a6ff;
             background-color: #1f242c;
         }
-
-        .menu-card h2 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-            color: #f0f6fc;
-        }
-
-        .menu-card p {
-            font-size: 13px;
-            color: #8b949e;
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        /* Кнопка переключения языков */
+        .menu-card h2 { margin: 0 0 10px 0; font-size: 18px; color: #f0f6fc; }
+        .menu-card p { font-size: 13px; color: #8b949e; margin: 0; line-height: 1.4; }
         .lang-btn {
             position: absolute;
             top: 20px;
@@ -85,18 +56,12 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
-            transition: background-color 0.2s;
         }
-
-        .lang-btn:hover {
-            background-color: #21262d;
-            border-color: #8b949e;
-        }
+        .lang-btn:hover { background-color: #21262d; border-color: #8b949e; }
     </style>
 </head>
 <body>
 
-    <!-- Переключатель языков -->
     <button class="lang-btn" id="langBtn">EN</button>
 
     <h1 id="mainTitle">Test-Auth Labs</h1>
@@ -105,113 +70,122 @@
     <div class="menu-grid">
         <a href="biometry.html" class="menu-card">
             <h2 id="m1-title">1. Biometry</h2>
-            <p id="m1-desc">Test Fingerprint, Face ID or Touch ID protection.</p>
+            <p id="m1-desc">Loading...</p>
         </a>
         <a href="otp.html" class="menu-card">
             <h2 id="m2-title">2. OTP Code</h2>
-            <p id="m2-desc">Test numeric one-time password inputs.</p>
+            <p id="m2-desc">Loading...</p>
         </a>
         <a href="pattern.html" class="menu-card">
             <h2 id="m3-title">3. Pattern Lock</h2>
-            <p id="m3-desc">Test graphical grid gesture sequence.</p>
+            <p id="m3-desc">Loading...</p>
         </a>
         <a href="hardware.html" class="menu-card">
             <h2 id="m4-title">4. Hardware Key</h2>
-            <p id="m4-desc">Test external FIDO2 USB tokens like YubiKey.</p>
+            <p id="m4-desc">Loading...</p>
         </a>
         <a href="push.html" class="menu-card">
             <h2 id="m5-title">5. Push Approval</h2>
-            <p id="m5-desc">Simulates real-time smartphone login approval window.</p>
+            <p id="m5-desc">Loading...</p>
         </a>
         <a href="matrix.html" class="menu-card">
             <h2 id="m6-title">6. Matrix Card</h2>
-            <p id="m6-desc">Validate coordinates against a code table card grid.</p>
+            <p id="m6-desc">Loading...</p>
         </a>
         <a href="magic.html" class="menu-card">
             <h2 id="m7-title">7. Magic Link</h2>
-            <p id="m7-desc">Test token validation through a simulated email link.</p>
+            <p id="m7-desc">Loading...</p>
         </a>
         <a href="face-id.html" class="menu-card">
             <h2 id="m8-title">8. Face Recognition</h2>
-            <p id="m8-desc">Simulates real-time biometric face camera streaming validation.</p>
+            <p id="m8-desc">Loading...</p>
         </a>
         <a href="sliding-captcha.html" class="menu-card">
             <h2 id="m9-title">9. Slider Captcha</h2>
-            <p id="m9-desc">Test advanced behavioral telemetry anti-bot puzzle mechanics.</p>
+            <p id="m9-desc">Loading...</p>
         </a>
         <a href="grid-auth.html" class="menu-card">
             <h2 id="m10-title">10. Grid PIN Auth</h2>
-            <p id="m10-desc">Verify exact text spell sequence on a randomized multi-cell layout.</p>
+            <p id="m10-desc">Loading...</p>
+        </a>
+        <a href="voice-auth.html" class="menu-card">
+            <h2 id="m11-title">11. Voice Biometrics</h2>
+            <p id="m11-desc">Loading...</p>
+        </a>
+        <a href="scrambled-pin.html" class="menu-card">
+            <h2 id="m12-title">12. Scrambled PIN Pad</h2>
+            <p id="m12-desc">Loading...</p>
+        </a>
+        <a href="crypto-quiz.html" class="menu-card">
+            <h2 id="m13-title">13. Zero-Knowledge Proof</h2>
+            <p id="m13-desc">Loading...</p>
         </a>
     </div>
 
     <script>
-        // Объект со всеми переводами для хаба
         const translations = {
             ru: {
                 title: "Лаборатория Аутентификации",
                 sub: "Выберите метод проверки подлинности для тестирования",
-                m1_t: "1. Биометрия", m1_d: "Проверка локального отпечатка пальца, Face ID или Touch ID через браузер.",
-                m2_t: "2. Одноразовый код (OTP)", m2_d: "Тестирование интерфейса ввода цифровых одноразовых токенов.",
-                m3_t: "3. Графический ключ", m3_d: "Проверка непрерывной последовательности жестов на матрице точек.",
-                m4_t: "4. Аппаратный ключ", m4_d: "Проверка внешних криптографических USB/NFC токенов FIDO2 (YubiKey).",
-                m5_t: "5. Push-подтверждение", m5_d: "Имитация удаленного окна одобрения сессии на мобильном устройстве.",
-                m6_t: "6. Матричная карта", m6_d: "Валидация уникальных координат по таблице секретных символов.",
-                m7_t: "7. Ссылка доступа", m7_d: "Тест беспарольного входа по криптографической ссылке из письма.",
-                m8_t: "8. Распознавание лица", m8_d: "Имитация биометрического сканирования через поток веб-камеры.",
-                m9_t: "9. Поведенческий слайдер", m9_d: "Анализ человеческой телеметрии скорости и траектории курсора.",
-                m10_t: "10. Буквенная сетка PIN", m10_d: "Проверка правильной последовательности кликов по случайной матрице."
+                cards: [
+                    { t: "1. Биометрия", d: "Проверка отпечатка пальца, Face ID или Touch ID через браузер." },
+                    { t: "2. Одноразовый код (OTP)", d: "Тестирование интерфейса ввода цифровых одноразовых токенов." },
+                    { t: "3. Графический ключ", d: "Проверка непрерывной последовательности жестов на матрице точек." },
+                    { t: "4. Аппаратный ключ", d: "Проверка внешних USB/NFC токенов FIDO2 (YubiKey)." },
+                    { t: "5. Push-подтверждение", d: "Имитация удаленного окна одобрения сессии на мобильном устройстве." },
+                    { t: "6. Матричная карта", d: "Валидация уникальных координат по таблице секретных символов." },
+                    { t: "7. Ссылка доступа", d: "Тест беспарольного входа по криптографической ссылке из письма." },
+                    { t: "8. Распознавание лица", d: "Имитация биометрического сканирования через поток веб-камеры." },
+                    { t: "9. Поведенческий слайдер", d: "Анализ человеческой телеметрии скорости и траектории курсора." },
+                    { t: "10. Буквенная сетка PIN", d: "Проверка правильной последовательности кликов по случайной матрице." },
+                    { t: "11. Голосовая биометрия", d: "Анализ акустических частот голоса и проверка кодовой фразы через микрофон." },
+                    { t: "12. Динамический PIN", d: "Сетка цифр перемешивается при каждом нажатии для защиты от роботов-кликеров." },
+                    { t: "13. Математическое доказательство", d: "Вход по концепции Zero-Knowledge Proof на базе решения хэш-уравнений." }
+                ]
             },
             en: {
                 title: "Test-Auth Labs",
                 sub: "Select an authentication method to test",
-                m1_t: "1. Biometry", m1_d: "Test Fingerprint, Face ID or Touch ID protection.",
-                m2_t: "2. OTP Code", m2_d: "Test numeric one-time password inputs.",
-                m3_t: "3. Pattern Lock", m3_d: "Test graphical grid gesture sequence.",
-                m4_t: "4. Hardware Key", m4_d: "Test external FIDO2 USB tokens like YubiKey.",
-                m5_t: "5. Push Approval", m5_d: "Simulates real-time smartphone login approval window.",
-                m6_t: "6. Matrix Card", m6_d: "Validate coordinates against a code table card grid.",
-                m7_t: "7. Magic Link", m7_d: "Test token validation through a simulated email link.",
-                m8_t: "8. Face Recognition", m8_d: "Simulates real-time biometric face camera streaming validation.",
-                m9_t: "9. Slider Captcha", m9_d: "Test advanced behavioral telemetry anti-bot puzzle mechanics.",
-                m10_t: "10. Grid PIN Auth", m10_d: "Verify exact text spell sequence on a randomized multi-cell layout."
+                cards: [
+                    { t: "1. Biometry", d: "Test Fingerprint, Face ID or Touch ID protection." },
+                    { t: "2. OTP Code", d: "Test numeric one-time password inputs." },
+                    { t: "3. Pattern Lock", d: "Test graphical grid gesture sequence." },
+                    { t: "4. Hardware Key", d: "Test external FIDO2 USB tokens like YubiKey." },
+                    { t: "5. Push Approval", d: "Simulates real-time smartphone login approval window." },
+                    { t: "6. Matrix Card", d: "Validate coordinates against a code table card grid." },
+                    { t: "7. Magic Link", d: "Test token validation through a simulated email link." },
+                    { t: "8. Face Recognition", d: "Simulates real-time biometric face camera streaming validation." },
+                    { t: "9. Slider Captcha", d: "Test advanced behavioral telemetry anti-bot puzzle mechanics." },
+                    { t: "10. Grid PIN Auth", d: "Verify exact text spell sequence on a randomized multi-cell layout." },
+                    { t: "11. Voice Biometrics", d: "Analyze voice frequency acoustics and statement signature inputs via mic." },
+                    { t: "12. Scrambled PIN Pad", d: "Anti-bot tracking layout. Grid digits dynamically scramble on every click sequence." },
+                    { t: "13. Zero-Knowledge Proof", d: "Verify security ownership through interactive hash puzzle verification equations." }
+                ]
             }
         };
 
-        // Загружаем язык из локального хранилища браузера, по умолчанию 'en'
         let currentLang = localStorage.getItem('hub_lang') || 'en';
 
         function applyLanguage() {
-            const t = translations[currentLang];
+            const data = translations[currentLang];
+            document.getElementById('mainTitle').innerText = data.title;
+            document.getElementById('mainSub').innerText = data.sub;
             
-            // Обновляем шапку
-            document.getElementById('mainTitle').innerText = t.title;
-            document.getElementById('mainSub').innerText = t.sub;
+            data.cards.forEach((card, index) => {
+                const id = index + 1;
+                document.getElementById(`m${id}-title`).innerText = card.t;
+                document.getElementById(`m${id}-desc`).innerText = card.d;
+            });
             
-            // Обновляем карточки
-            document.getElementById('m1-title').innerText = t.m1_t; document.getElementById('m1-desc').innerText = t.m1_d;
-            document.getElementById('m2-title').innerText = t.m2_t; document.getElementById('m2-desc').innerText = t.m2_d;
-            document.getElementById('m3-title').innerText = t.m3_t; document.getElementById('m3-desc').innerText = t.m3_d;
-            document.getElementById('m4-title').innerText = t.m4_t; document.getElementById('m4-desc').innerText = t.m4_d;
-            document.getElementById('m5-title').innerText = t.m5_t; document.getElementById('m5-desc').innerText = t.m5_d;
-            document.getElementById('m6-title').innerText = t.m6_t; document.getElementById('m6-desc').innerText = t.m6_d;
-            document.getElementById('m7-title').innerText = t.m7_t; document.getElementById('m7-desc').innerText = t.m7_d;
-            document.getElementById('m8-title').innerText = t.m8_t; document.getElementById('m8-desc').innerText = t.m8_d;
-            document.getElementById('m9-title').innerText = t.m9_t; document.getElementById('m9-desc').innerText = t.m9_d;
-            document.getElementById('m10-title').innerText = t.m10_t; document.getElementById('m10-desc').innerText = t.m10_d;
-            
-            // Текст кнопки показывает язык, на который можно ПЕРЕКЛЮЧИТЬСЯ
             document.getElementById('langBtn').innerText = currentLang === 'en' ? 'RU' : 'EN';
         }
 
-        // Обработчик клика по кнопке языка
         document.getElementById('langBtn').addEventListener('click', () => {
             currentLang = currentLang === 'en' ? 'ru' : 'en';
-            localStorage.setItem('hub_lang', currentLang); // Сохраняем выбор в браузере
+            localStorage.setItem('hub_lang', currentLang);
             applyLanguage();
         });
 
-        // Инициализация при загрузке
         applyLanguage();
     </script>
 </body>
