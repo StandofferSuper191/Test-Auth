@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Биометрии на GitHub Pages</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0d1117; /* Темная тема в стиле GitHub */
+            color: #c9d1d9;
+        }
+        .container {
+            text-align: center;
+            padding: 30px;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            background-color: #161b22;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 15px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #238636; /* Зеленая кнопка GitHub */
+            border: 1px solid rgba(240,246,252,0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2ea44f;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Тестирование WebAuthn (Passkeys)</h1>
+        <!-- Кнопка для запуска -->
+        <button id="auth-btn">Активировать отпечаток / Face ID</button>
+        <div id="status">Нажмите на кнопку для проверки биометрии</div>
+    </div>
+
+    <script>
+        document.getElementById('auth-btn').addEventListener('click', async () => {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerText = "Инициализация...";
+            statusDiv.style.color = "#8b949e";
+            
+            // 1. Проверяем поддержку технологии в браузере
+            if (!window.PublicKeyCredential) {
+                statusDiv.innerText = "Ошибка: Ваш браузер или устройство не поддерживают WebAuthn.";
+                statusDiv.style.color = "#f85149";
+                return;
+            }
+
+            // Функция для генерации случайных криптографических байт (нужна для обхода защиты браузера)
+            const generateRandomBuffer = (size) => {
+                const buffer = new Uint8Array(size);
+                window.crypto.getRandomValues(buffer);
+                return buffer;
+            };
+
+            // 2. Формируем валидные параметры для вызова крипто-чипа
+            const publicKeyCredentialCreationOptions = {
+                // Браузер требует случайный буфер (обычно от 16 до 32 байт)
+                challenge: generateRandomBuffer(32),
+                
+                rp: {
+                    name: "GitHub Pages Bio Test",
+                    id: window.location.hostname // Для `username.github.io` вернет ваш домен
+                },
+                
+                user: {
+                    id: generateRandomBuffer(16), // Уникальный бинарный ID пользователя
+                    name: "github_tester",
+                    displayName: "Тестер GitHub Pages"
+                },
+                
+                pubKeyCredParams: [
+                    { type: "public-key", alg: -7 },  // ES256 (основной алгоритм для Android и iOS)
+                    { type: "public-key", alg: -257 } // RS256 (для старых ПК)
+                ],
+                
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform", // Принудительно вызываем локальный датчик (палец/лицо)
+                    userVerification: "required"         // Требуем обязательного сканирования
+                },
+                
+                timeout: 60000
+            };
+
+            try {
+                statusDiv.innerText = "Ожидание сканирования...";
+                
+                // 3. Вызываем системную шторку операционной системы
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+                
+                // Если биометрия успешно пройдена:
+                statusDiv.innerText = "🎉 Успешно! Биометрия подтверждена на устройстве.";
+                statusDiv.style.color = "#3fb950";
+                console.log("Сгенерированный публичный ключ:", credential);
+
+            } catch (err) {
+                // Если пользователь нажал «Отмена» или устройство не настроено
+                console.error("Ошибка WebAuthn:", err);
+                statusDiv.innerText = "Отклонено или ошибка: " + err.message;
+                statusDiv.style.color = "#f85149";
+            }
+        });
+    </script>
+
+</body>
+</html>
