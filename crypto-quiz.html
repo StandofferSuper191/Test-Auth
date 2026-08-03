@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Zero-Knowledge Quiz</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 400px; width: 100%; box-sizing: border-box; }
+        
+        .quiz-box { background: #0d1117; border: 1px solid #30363d; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left; }
+        .quiz-question { font-weight: bold; color: #f0f6fc; margin-bottom: 8px; font-size: 14px; }
+        .quiz-formula { font-family: monospace; color: #ffa657; background: #21262d; padding: 6px; border-radius: 4px; font-size: 13px; text-align: center; }
+        
+        /* Кнопки вариантов ответа */
+        .option-btn { width: 100%; text-align: left; padding: 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; margin-bottom: 10px; font-family: monospace; font-size: 12px; transition: background 0.2s; }
+        .option-btn:hover { background: #30363d; border-color: #8b949e; }
+        
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Zero-Knowledge Proof</h2>
+        <p>Prove you own the private masterkey without exposing it. Solve the variable hash equation below.</p>
+        
+        <div class="quiz-box">
+            <div class="quiz-question">If MasterKey secret value parameter X = 5, resolve block equation:</div>
+            <div class="quiz-formula">SHA256_Hash(X + 12) = ?</div>
+        </div>
+
+        <!-- Варианты ответов (Правильный - первый, т.к. это SHA256 от "17") -->
+        <button class="option-btn" onclick="checkAnswer(true)">👉 8ad4b2e811c05d762f0f1b212c40c83a0... (Hash of 17)</button>
+        <button class="option-btn" onclick="checkAnswer(false)">👉 4c7f5f2e82103d126f0f5b212c40c67e1... (Hash of 5)</button>
+        <button class="option-btn" onclick="checkAnswer(false)">👉 e3b0c44298fc1c149afbf4c8996fb9242... (Hash of Null)</button>
+
+        <div id="status">Status: Waiting for cryptographic verification</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        const status = document.getElementById('status');
+
+        function checkAnswer(isCorrect) {
+            if (isCorrect) {
+                status.innerText = "🎉 Mathematical proof valid! Block signed.";
+                status.style.color = "#3fb950";
+            } else {
+                status.innerText = "❌ Proof verification failed. Cryptographic mismatch.";
+                status.style.color = "#f85149";
+            }
+        }
+    </script>
+</body>
+</html>
