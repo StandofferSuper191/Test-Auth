@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Matrix Card</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 380px; width: 100%; box-sizing: border-box; position: relative; }
+        button { width: 100%; padding: 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:hover { background: #30363d; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        .lang-btn { position: absolute; top: 15px; right: 15px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; width: auto; }
+        
+        /* Стили таблицы-матрицы */
+        .matrix-table { border-collapse: collapse; margin: 20px auto; background: #0d1117; }
+        .matrix-table td, .matrix-table th { border: 1px solid #30363d; padding: 8px 12px; text-align: center; font-mono: monospace; }
+        .matrix-table th { background: #1f242c; color: #58a6ff; }
+        
+        input { width: 60px; padding: 8px; background: #0d1117; border: 1px solid #30363d; color: white; text-align: center; border-radius: 4px; font-size: 16px; }
+        input:focus { border-color: #58a6ff; outline: none; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <button class="lang-btn" id="langBtn">EN</button>
+        <h2 id="title">Matrix Card Auth</h2>
+        <p id="desc">Enter the character from your security card grid at the requested coordinates.</p>
+        
+        <!-- Матрица кодов (например, строка A, B, C и столбцы 1, 2, 3) -->
+        <table class="matrix-table">
+            <tr><th></th><th>1</th><th>2</th><th>3</th></tr>
+            <tr><th>A</th><td>X</td><td>7</td><td>M</td></tr>
+            <tr><th>B</th><td>4</td><td>K</td><td>2</td></tr>
+            <tr><th>C</th><td>P</td><td>9</td><td>R</td></tr>
+        </table>
+
+        <div style="margin: 15px 0;">
+            <span id="promptText" style="font-weight: bold; color: #fff;">Enter value for [B2]: </span>
+            <input type="text" id="matrixInput" maxlength="1">
+        </div>
+
+        <button id="verifyBtn">Verify Coordinate</button>
+        <div id="status">Status: Ready</div>
+        <a href="index.html" class="back-link" id="backLink">← Back to Hub</a>
+    </div>
+
+    <script>
+        const translations = {
+            ru: {
+                title: "Матричная карта кодов",
+                desc: "Введите символ с вашей карты безопасности, находящийся на указанных координатах.",
+                prompt: "Введите значение для [B2]: ",
+                btn: "Проверить координату",
+                ready: "Статус: Ожидание ввода",
+                success: "🎉 Код подтвержден! Доступ разрешен.",
+                error: "❌ Ошибка: Неверный символ.",
+                back: "← Назад в меню"
+            },
+            en: {
+                title: "Matrix Card Auth",
+                desc: "Enter the character from your security card grid at the requested coordinates.",
+                prompt: "Enter value for [B2]: ",
+                btn: "Verify Coordinate",
+                ready: "Status: Ready",
+                success: "🎉 Code verified! Access granted.",
+                error: "❌ Error: Invalid coordinate value.",
+                back: "← Back to Hub"
+            }
+        };
+
+        let currentLang = localStorage.getItem('auth_lang') || 'en';
+        
+        function updateLang() {
+            const t = translations[currentLang];
+            document.getElementById('title').innerText = t.title;
+            document.getElementById('desc').innerText = t.desc;
+            document.getElementById('promptText').innerText = t.prompt;
+            document.getElementById('verifyBtn').innerText = t.btn;
+            document.getElementById('backLink').innerText = t.back;
+            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
+            if(document.getElementById('status').innerText.includes('Ready') || document.getElementById('status').innerText.includes('Ожидание')) {
+                document.getElementById('status').innerText = t.ready;
+            }
+        }
+
+        document.getElementById('langBtn').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ru' : 'en';
+            localStorage.setItem('auth_lang', currentLang);
+            updateLang();
+        });
+
+        document.getElementById('verifyBtn').addEventListener('click', () => {
+            const t = translations[currentLang];
+            const val = document.getElementById('matrixInput').value.toUpperCase();
+            // На пересечении B2 в таблице стоит буква 'K'
+            if (val === 'K') {
+                document.getElementById('status').innerText = t.success;
+                document.getElementById('status').style.color = "#3fb950";
+            } else {
+                document.getElementById('status').innerText = t.error;
+                document.getElementById('status').style.color = "#f85149";
+            }
+        });
+
+        updateLang();
+    </script>
+</body>
+</html>
