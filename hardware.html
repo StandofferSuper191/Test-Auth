@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Auth | Hardware</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; text-align: center; max-width: 350px; width: 100%; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #8957e5; border: 1px solid rgba(240,246,252,0.1); color: white; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #986ff3; }
+        .back-link { margin-top: 20px; display: inline-block; color: #58a6ff; text-decoration: none; font-size: 14px; }
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Hardware Key</h2>
+        <p>Uses FIDO2 Cross-Platform API. It looks for external tokens like YubiKey via USB or NFC.</p>
+        <button id="btn">Scan Security Key</button>
+        <div id="status">Status: Ready</div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </div>
+
+    <script>
+        document.getElementById('btn').addEventListener('click', async () => {
+            const status = document.getElementById('status');
+            if (!window.PublicKeyCredential) return alert("Not supported");
+
+            const buffer = new Uint8Array(32); window.crypto.getRandomValues(buffer);
+            const userBuf = new Uint8Array(16); window.crypto.getRandomValues(userBuf);
+
+            const options = {
+                challenge: buffer,
+                rp: { name: "Test Auth Labs", id: window.location.hostname },
+                user: { id: userBuf, name: "hw_user", displayName: "FIDO User" },
+                pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                authenticatorSelection: { authenticatorAttachment: "cross-platform", userVerification: "discouraged" },
+                timeout: 60000
+            };
+
+            try {
+                status.innerText = "Insert and tap token...";
+                await navigator.credentials.create({ publicKey: options });
+                status.innerText = "Success: Signed!"; status.style.color = "#3fb950";
+            } catch (err) {
+                status.innerText = "Failed: " + err.message; status.style.color = "#f85149";
+            }
+        });
+    </script>
+</body>
+</html>
